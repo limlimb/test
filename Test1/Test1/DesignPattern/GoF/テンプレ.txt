@@ -1,0 +1,23 @@
+﻿using System;
+using Test1.DesignPattern.GoF.Adapter;
+
+// Adapter パターン
+
+
+namespace Test1.DesignPattern.GoF.Adapter
+{
+
+}
+
+namespace Test1.DesignPattern.Tester
+{
+    static class Adapter
+    {
+        public static void Test()
+        {
+            Console.WriteLine("### Adapter");
+
+
+        }
+    }
+}
