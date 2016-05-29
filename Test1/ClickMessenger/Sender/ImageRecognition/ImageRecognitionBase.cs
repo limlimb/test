@@ -21,8 +21,7 @@ namespace ClickMessenger.Sender.ImageRecognition
             using (var result = new CvMat(screenImage.Height - tmplImage.Height + 1, screenImage.Width - tmplImage.Width + 1, MatrixType.F32C1))
             {
                 Cv.MatchTemplate(screenImage, tmplImage, result, MatchTemplateMethod.CCoeffNormed);
-                double minVal;
-                double maxVal;
+                double minVal, maxVal;
                 var minPoint = new CvPoint();
                 var maxPoint = new CvPoint();
                 // Val = 相関係数, max/min = 最大/最小の相関係数または相関係数の座標を格納する
