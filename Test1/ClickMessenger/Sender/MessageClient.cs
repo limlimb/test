@@ -31,15 +31,15 @@ namespace ClickMessenger.Sender
             { IsBackground = true };
             capturingThread = new Thread(new ThreadStart(() =>
             {
-                var recognizers = new ImageRecognitionBase[]
-                {
-                    new Clickable(),
-                };
                 while (true)
                 {
                     using (var screen = ScreenCapture.GrayCapture(flashHandle))
                     {
-                        foreach(var recognizer in recognizers)
+                        var recognizers = new ImageRecognitionBase[]
+                        {
+                            new Clickable(),
+                        };
+                        foreach (var recognizer in recognizers)
                         {
                             if (recognizer.Check(screen)) sender.Click(recognizer.X, recognizer.Y);
                         }
