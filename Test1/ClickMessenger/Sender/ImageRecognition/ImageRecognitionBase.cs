@@ -26,7 +26,7 @@ namespace ClickMessenger.Sender.ImageRecognition
                 var maxPoint = new CvPoint();
                 // Val = 相関係数, max/min = 最大/最小の相関係数または相関係数の座標を格納する
                 Cv.MinMaxLoc(result, out minVal, out maxVal, out minPoint, out maxPoint);
-
+                
                 // 0.73, 0.82, 0.93あたりの値は確認済み, 暫定的に閾値を0.7にしておく
                 if (maxVal > 0.7)
                 {

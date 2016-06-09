@@ -16,6 +16,7 @@ namespace ClickMessenger
     public partial class MainForm : Form
     {
         MessageClient client;
+        ComboClient comboClient;
         Config config;
         
         public MainForm()
@@ -34,6 +35,7 @@ namespace ClickMessenger
         private void MainForm_FormClosed(object sender, FormClosedEventArgs e)
         {
             client?.Dispose();
+            comboClient?.Dispose();
 
             // 設定内容の保存
             SetConfig();
@@ -71,9 +73,39 @@ namespace ClickMessenger
             config.ClickInterval = (int)clickIntervalNumericUpDown.Value;
         }
 
-        private void testButton_Click(object sender, EventArgs e)
+        private void comboStartButton_Click(object sender, EventArgs e)
         {
-            
+            comboStartButton.Enabled = false;
+
+            var flashHandle = FlashHandle.Get();
+            comboClient = new ComboClient(flashHandle);
+
+            comboStopButton.Enabled = true;
+        }
+
+        private void comboStopButton_Click(object sender, EventArgs e)
+        {
+            comboStopButton.Enabled = false;
+
+            comboClient.Dispose();
+            comboClient = null;
+
+            comboStartButton.Enabled = true;
+        }
+
+        private void progressionButton_Click(object sender, EventArgs e)
+        {
+            client?.ProgressiveClick();
+        }
+
+        private void previousMapButton_Click(object sender, EventArgs e)
+        {
+            client?.PreviousMapClick();
+        }
+
+        private void nextMapButton_Click(object sender, EventArgs e)
+        {
+            client?.NextMapClick();
         }
     }
 }

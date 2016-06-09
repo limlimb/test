@@ -19,7 +19,7 @@ namespace ClickMessenger.Sender
             sender = new MessageSender(flashHandle);
 
             // スレッドの初期化
-            clickThread = new Thread(new ThreadStart(() =>
+            clickThread = new Thread(() =>
             {
                 while (true)
                 {
@@ -27,9 +27,9 @@ namespace ClickMessenger.Sender
                     var interval = 1000 / config.ClickInterval;
                     Thread.Sleep(interval);
                 }
-            }))
+            })
             { IsBackground = true };
-            capturingThread = new Thread(new ThreadStart(() =>
+            capturingThread = new Thread(() =>
             {
                 while (true)
                 {
@@ -46,12 +46,30 @@ namespace ClickMessenger.Sender
                     }
                     Thread.Sleep(15000);
                 }
-            }))
+            })
             { IsBackground = true };
 
             // スレッドの開始
             clickThread.Start();
             capturingThread.Start();
+        }
+
+        public void ProgressiveClick()
+        {
+            // 靴アイコンは1113, 250
+            sender.Click(1113, 250);
+        }
+
+        public void NextMapClick()
+        {
+            // 次のマップ: 907, 42
+            sender.Click(907, 42);
+        }
+
+        public void PreviousMapClick()
+        {
+            // 前のマップ: 784, 42
+            sender.Click(784, 42);
         }
 
         #region IDisposableメンバ
