@@ -8,28 +8,49 @@ using ClickMessenger.Sender.ImageRecognition;
 
 namespace ClickMessenger.Sender
 {
+    // 連打や各クリック用のクライアント
+    //
+    // 勉強: Taskベースの投げっぱなしマルチスレッド処理クラス
+    // TaskCreationOptions.LongRunningはスレッドプールに含まれない専用のスレッドを生成するが、
+    // Defaultでどうしても処理が遅くなってしまうケース以外では通常推奨されない
     class MessageClient : IDisposable
     {
         MessageSender sender;
-        Thread clickThread;
-        Thread capturingThread;
+        Task clickTask;
+        Task capturingTask;
+        CancellationTokenSource cts;
+        CancellationToken token;
 
         public MessageClient(IntPtr flashHandle, Config config)
         {
             sender = new MessageSender(flashHandle);
+            cts = new CancellationTokenSource();
+            token = cts.Token;
 
-            // スレッドの初期化
-            clickThread = new Thread(() =>
+            // タスクの初期化
+            if (!(config.DontClick))
             {
-                while (true)
+                clickTask = Task.Factory.StartNew(() =>
                 {
-                    sender.Click(900, 320);
-                    var interval = 1000 / config.ClickInterval;
-                    Thread.Sleep(interval);
-                }
-            })
-            { IsBackground = true };
-            capturingThread = new Thread(() =>
+                    while (true)
+                    {
+                        sender.Click(900, 320);
+                        var interval = 1000 / config.ClickInterval;
+                        Thread.Sleep(interval);
+
+                        try
+                        {
+                            if (token.IsCancellationRequested) token.ThrowIfCancellationRequested();
+                        }
+                        catch (OperationCanceledException) { return; }
+                    }
+                },
+                token,
+                TaskCreationOptions.None,
+                TaskScheduler.Default
+                );
+            }
+            capturingTask = Task.Factory.StartNew(() =>
             {
                 while (true)
                 {
@@ -44,14 +65,20 @@ namespace ClickMessenger.Sender
                             if (recognizer.Check(screen)) sender.Click(recognizer.X, recognizer.Y);
                         }
                     }
+
+                    try
+                    {
+                        if (token.IsCancellationRequested) token.ThrowIfCancellationRequested();
+                    }
+                    catch (OperationCanceledException) { return; }
+
                     Thread.Sleep(15000);
                 }
-            })
-            { IsBackground = true };
-
-            // スレッドの開始
-            clickThread.Start();
-            capturingThread.Start();
+            },
+            token,
+            TaskCreationOptions.None,
+            TaskScheduler.Default
+            );
         }
 
         public void ProgressiveClick()
@@ -76,8 +103,8 @@ namespace ClickMessenger.Sender
 
         public void Dispose()
         {
-            try { clickThread.Abort(); } catch { }
-            try { capturingThread.Abort(); } catch { }
+            cts.Cancel();
+            cts.Dispose();
         }
 
         #endregion

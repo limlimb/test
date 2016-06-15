@@ -1,12 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading;
-using System.Threading.Tasks;
 
 namespace ClickMessenger.Sender
 {
+    // DRコンボ用のクライアント
+    // 勉強: Threadベースの投げっぱなしマルチスレッド処理クラス
     class ComboClient : IDisposable
     {
         MessageSender sender;

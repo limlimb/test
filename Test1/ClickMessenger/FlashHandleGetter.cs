@@ -9,7 +9,7 @@ namespace ClickMessenger
     {
         static readonly string FlashHandleString = "MacromediaFlashPlayerActiveX";
         static List<IntPtr> handles = new List<IntPtr>();
-
+        
         public static IntPtr Get()
         {
             // IEのウィンドウハンドルの取得
@@ -25,7 +25,7 @@ namespace ClickMessenger
                 NativeMethods.GetClassName(handle, sb, sb.Capacity);
                 if (sb.ToString() == FlashHandleString) return handle;
             }
-            return IntPtr.Zero;
+            throw new InvalidOperationException("FlashPlayerのハンドルが見つかりません。");
         }
 
         static bool EnumWindowProc(IntPtr handle, IntPtr lParam)

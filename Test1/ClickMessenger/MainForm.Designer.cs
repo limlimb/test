@@ -39,18 +39,19 @@
             this.label3 = new System.Windows.Forms.Label();
             this.comboStopButton = new System.Windows.Forms.Button();
             this.progressionButton = new System.Windows.Forms.Button();
-            this.groupBox2 = new System.Windows.Forms.GroupBox();
+            this.clickGroupBox = new System.Windows.Forms.GroupBox();
             this.nextMapButton = new System.Windows.Forms.Button();
             this.previousMapButton = new System.Windows.Forms.Button();
+            this.clickCheckBox = new System.Windows.Forms.CheckBox();
             ((System.ComponentModel.ISupportInitialize)(this.clickIntervalNumericUpDown)).BeginInit();
             this.configGroupBox.SuspendLayout();
             this.groupBox1.SuspendLayout();
-            this.groupBox2.SuspendLayout();
+            this.clickGroupBox.SuspendLayout();
             this.SuspendLayout();
             // 
             // startButton
             // 
-            this.startButton.Location = new System.Drawing.Point(146, 124);
+            this.startButton.Location = new System.Drawing.Point(146, 121);
             this.startButton.Name = "startButton";
             this.startButton.Size = new System.Drawing.Size(60, 20);
             this.startButton.TabIndex = 0;
@@ -61,7 +62,7 @@
             // stopButton
             // 
             this.stopButton.Enabled = false;
-            this.stopButton.Location = new System.Drawing.Point(212, 124);
+            this.stopButton.Location = new System.Drawing.Point(212, 121);
             this.stopButton.Name = "stopButton";
             this.stopButton.Size = new System.Drawing.Size(60, 20);
             this.stopButton.TabIndex = 1;
@@ -106,13 +107,14 @@
             // 
             // configGroupBox
             // 
+            this.configGroupBox.Controls.Add(this.clickCheckBox);
             this.configGroupBox.Controls.Add(this.label1);
             this.configGroupBox.Controls.Add(this.label2);
             this.configGroupBox.Controls.Add(this.clickIntervalNumericUpDown);
             this.configGroupBox.Location = new System.Drawing.Point(12, 12);
             this.configGroupBox.Name = "configGroupBox";
             this.configGroupBox.Padding = new System.Windows.Forms.Padding(3, 10, 3, 3);
-            this.configGroupBox.Size = new System.Drawing.Size(259, 50);
+            this.configGroupBox.Size = new System.Drawing.Size(259, 47);
             this.configGroupBox.TabIndex = 5;
             this.configGroupBox.TabStop = false;
             this.configGroupBox.Text = "設定";
@@ -132,7 +134,7 @@
             this.groupBox1.Controls.Add(this.label3);
             this.groupBox1.Controls.Add(this.comboStopButton);
             this.groupBox1.Controls.Add(this.comboStartButton);
-            this.groupBox1.Location = new System.Drawing.Point(12, 162);
+            this.groupBox1.Location = new System.Drawing.Point(12, 147);
             this.groupBox1.Name = "groupBox1";
             this.groupBox1.Padding = new System.Windows.Forms.Padding(3, 10, 3, 3);
             this.groupBox1.Size = new System.Drawing.Size(259, 105);
@@ -171,18 +173,19 @@
             this.progressionButton.UseVisualStyleBackColor = true;
             this.progressionButton.Click += new System.EventHandler(this.progressionButton_Click);
             // 
-            // groupBox2
+            // clickGroupBox
             // 
-            this.groupBox2.Controls.Add(this.nextMapButton);
-            this.groupBox2.Controls.Add(this.previousMapButton);
-            this.groupBox2.Controls.Add(this.progressionButton);
-            this.groupBox2.Location = new System.Drawing.Point(12, 68);
-            this.groupBox2.Name = "groupBox2";
-            this.groupBox2.Padding = new System.Windows.Forms.Padding(3, 10, 3, 3);
-            this.groupBox2.Size = new System.Drawing.Size(259, 50);
-            this.groupBox2.TabIndex = 6;
-            this.groupBox2.TabStop = false;
-            this.groupBox2.Text = "特定箇所のクリック";
+            this.clickGroupBox.Controls.Add(this.nextMapButton);
+            this.clickGroupBox.Controls.Add(this.previousMapButton);
+            this.clickGroupBox.Controls.Add(this.progressionButton);
+            this.clickGroupBox.Enabled = false;
+            this.clickGroupBox.Location = new System.Drawing.Point(12, 65);
+            this.clickGroupBox.Name = "clickGroupBox";
+            this.clickGroupBox.Padding = new System.Windows.Forms.Padding(3, 10, 3, 3);
+            this.clickGroupBox.Size = new System.Drawing.Size(259, 50);
+            this.clickGroupBox.TabIndex = 6;
+            this.clickGroupBox.TabStop = false;
+            this.clickGroupBox.Text = "特定箇所のクリック";
             // 
             // nextMapButton
             // 
@@ -204,12 +207,23 @@
             this.previousMapButton.UseVisualStyleBackColor = true;
             this.previousMapButton.Click += new System.EventHandler(this.previousMapButton_Click);
             // 
+            // clickCheckBox
+            // 
+            this.clickCheckBox.AutoSize = true;
+            this.clickCheckBox.Location = new System.Drawing.Point(169, 21);
+            this.clickCheckBox.Name = "clickCheckBox";
+            this.clickCheckBox.Size = new System.Drawing.Size(77, 16);
+            this.clickCheckBox.TabIndex = 5;
+            this.clickCheckBox.Text = "連打しない";
+            this.clickCheckBox.UseVisualStyleBackColor = true;
+            this.clickCheckBox.CheckedChanged += new System.EventHandler(this.clickCheckBox_CheckedChanged);
+            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(284, 274);
-            this.Controls.Add(this.groupBox2);
+            this.ClientSize = new System.Drawing.Size(284, 259);
+            this.Controls.Add(this.clickGroupBox);
             this.Controls.Add(this.groupBox1);
             this.Controls.Add(this.configGroupBox);
             this.Controls.Add(this.stopButton);
@@ -224,7 +238,7 @@
             this.configGroupBox.ResumeLayout(false);
             this.configGroupBox.PerformLayout();
             this.groupBox1.ResumeLayout(false);
-            this.groupBox2.ResumeLayout(false);
+            this.clickGroupBox.ResumeLayout(false);
             this.ResumeLayout(false);
 
         }
@@ -242,9 +256,10 @@
         private System.Windows.Forms.Button comboStopButton;
         private System.Windows.Forms.Label label3;
         private System.Windows.Forms.Button progressionButton;
-        private System.Windows.Forms.GroupBox groupBox2;
+        private System.Windows.Forms.GroupBox clickGroupBox;
         private System.Windows.Forms.Button nextMapButton;
         private System.Windows.Forms.Button previousMapButton;
+        private System.Windows.Forms.CheckBox clickCheckBox;
     }
 }
 

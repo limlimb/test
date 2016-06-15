@@ -37,5 +37,11 @@ namespace ClickMessenger.Native
         {
             public int left, top, right, bottom;
         }
+
+        [DllImport("user32.dll")]
+        internal static extern int RegisterHotKey(IntPtr hwnd, int id, int modkey, int key);
+
+        [DllImport("user32.dll")]
+        internal static extern int UnregisterHotKey(IntPtr hwnd, int id);
     }
 }

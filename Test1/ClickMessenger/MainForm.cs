@@ -18,10 +18,17 @@ namespace ClickMessenger
         MessageClient client;
         ComboClient comboClient;
         Config config;
-        
+
+        const int WM_HOTKEY = 0x0312;
+        const int HOTKEY_ID = 0x0001;
+
         public MainForm()
         {
+            // 設定の読み込み
             XmlHelper.Load(out config);
+            // ホットキーの登録
+            Native.NativeMethods.RegisterHotKey(this.Handle, HOTKEY_ID, 0, (int)Keys.F2);
+
             InitializeComponent();
         }
 
@@ -30,18 +37,21 @@ namespace ClickMessenger
             // 設定内容の反映
             // TODO: NofityPropertyChangedの実装をめんどくさがらずにやる
             clickIntervalNumericUpDown.Value = config.ClickInterval;
+            clickCheckBox.Checked = config.DontClick;
         }
 
         private void MainForm_FormClosed(object sender, FormClosedEventArgs e)
         {
-            client?.Dispose();
-            comboClient?.Dispose();
+            // ホットキーの解除
+            Native.NativeMethods.UnregisterHotKey(this.Handle, HOTKEY_ID);
 
             // 設定内容の保存
             SetConfig();
             XmlHelper.Update(config);
 
             // 解放
+            client?.Dispose();
+            comboClient?.Dispose();
             Sender.ImageRecognition.IplImages.Dispose();
         }
 
@@ -49,11 +59,25 @@ namespace ClickMessenger
         {
             startButton.Enabled = false;
             configGroupBox.Enabled = false;
+            clickGroupBox.Enabled = true;
 
-            var flashHandle = FlashHandle.Get();
+            IntPtr flashHandle;
+            try
+            {
+                flashHandle = FlashHandle.Get();
+            }
+            catch (InvalidOperationException)
+            {
+                MessageBox.Show("FlashPlayerのハンドルが見つかりません。\r\n"
+                    +"IEでClickerHeroesを開いてください。", "エラー", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                startButton.Enabled = true;
+                configGroupBox.Enabled = true;
+                clickGroupBox.Enabled = false;
+                return;
+            }
+            
             SetConfig();
             client = new MessageClient(flashHandle, config);
-
             stopButton.Enabled = true;
         }
 
@@ -66,20 +90,33 @@ namespace ClickMessenger
 
             startButton.Enabled = true;
             configGroupBox.Enabled = true;
+            clickGroupBox.Enabled = false;
         }
 
         void SetConfig()
         {
             config.ClickInterval = (int)clickIntervalNumericUpDown.Value;
+            config.DontClick = clickCheckBox.Checked;
         }
 
         private void comboStartButton_Click(object sender, EventArgs e)
         {
             comboStartButton.Enabled = false;
 
-            var flashHandle = FlashHandle.Get();
-            comboClient = new ComboClient(flashHandle);
+            IntPtr flashHandle;
+            try
+            {
+                flashHandle = FlashHandle.Get();
+            }
+            catch (InvalidOperationException)
+            {
+                MessageBox.Show("FlashPlayerのハンドルが見つかりません。\r\n"
+                    + "IEでClickerHeroesを開いてください。", "エラー", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                comboStartButton.Enabled = true;
+                return;
+            }
 
+            comboClient = new ComboClient(flashHandle);
             comboStopButton.Enabled = true;
         }
 
@@ -107,5 +144,38 @@ namespace ClickMessenger
         {
             client?.NextMapClick();
         }
+
+        private void clickCheckBox_CheckedChanged(object sender, EventArgs e)
+        {
+            if (clickCheckBox.Checked)
+            {
+                config.DontClick = true;
+                clickIntervalNumericUpDown.Enabled = false;
+            }
+            else
+            {
+                config.DontClick = false;
+                clickIntervalNumericUpDown.Enabled = true;
+            }
+        }
+
+        #region Form
+
+        protected override void WndProc(ref Message m)
+        {
+            base.WndProc(ref m);
+
+            if (m.Msg == WM_HOTKEY)
+            {
+                if ((int)m.WParam == HOTKEY_ID)
+                {
+                    // 実行中かどうかのフラグを明確に立てるべき
+                    if (client == null) startButton.PerformClick();
+                    else stopButton.PerformClick();
+                }
+            }
+        }
+
+        #endregion
     }
 }

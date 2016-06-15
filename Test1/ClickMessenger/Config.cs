@@ -19,6 +19,8 @@ namespace ClickMessenger
         /// </summary>
         [DataMember]
         public int ClickInterval;
+        [DataMember]
+        public bool DontClick;
 
         /// <summary>既定値を設定する
         /// </summary>
@@ -26,6 +28,7 @@ namespace ClickMessenger
         public void SetStatus(StreamingContext sc)
         {
             ClickInterval = 30;
+            DontClick = false;
         }
     }
 }
